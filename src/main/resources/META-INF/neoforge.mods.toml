@@ -1,0 +1,45 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mods]]
+modId="jmchunkybridge"
+version="1.0.0"
+displayName="JourneyMap Chunky Bridge"
+authors="OpenFox"
+description='''Bridges Chunky chunk pre-generation with JourneyMap and JMSharedMaps to automatically render map tiles for generated chunks and share them with all multiplayer players.'''
+
+[[dependencies.jmchunkybridge]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.jmchunkybridge]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.jmchunkybridge]]
+    modId="jmsharedmaps"
+    type="required"
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.jmchunkybridge]]
+    modId="journeymap"
+    type="required"
+    versionRange="[1.21.1-6.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.jmchunkybridge]]
+    modId="chunky"
+    type="optional"
+    versionRange="[1.0.0,)"
+    ordering="NONE"
+    side="BOTH"
