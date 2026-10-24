@@ -6,4 +6,5 @@ build/
 run/
 build_tools/
 *.zip
+*.jar
 .DS_Store
