@@ -10,6 +10,10 @@ public class BridgeConfig {
     public final ModConfigSpec.BooleanValue enabled;
     public final ModConfigSpec.BooleanValue autoSyncOnChunkLoad;
     public final ModConfigSpec.BooleanValue autoSyncChunkyOnly;
+    public final ModConfigSpec.BooleanValue liveRelayDuringChunky;
+    public final ModConfigSpec.BooleanValue liveRelayDuringScan;
+    public final ModConfigSpec.BooleanValue excludeNearbyPlayers;
+    public final ModConfigSpec.IntValue playerExcludeRadiusChunks;
     public final ModConfigSpec.IntValue chunksPerTick;
     public final ModConfigSpec.IntValue notifyIntervalSeconds;
     public final ModConfigSpec.BooleanValue skipAlreadyCached;
@@ -33,8 +37,24 @@ public class BridgeConfig {
                 .define("autoSyncOnChunkLoad", true);
 
         autoSyncChunkyOnly = builder
-                .comment("If true, only auto-generate for chunks when Chunky is actively running or chunk is newly generated. If false, covers any unmapped chunk loaded.")
-                .define("autoSyncChunkyOnly", false);
+                .comment("If true, only auto-generate for chunks when Chunky is actively running. If false, intercepts any chunk loaded.")
+                .define("autoSyncChunkyOnly", true);
+
+        liveRelayDuringChunky = builder
+                .comment("If true, stream tiles over network to online players in real-time while Chunky is generating. If false, tiles are saved directly to server cache without flooding player network queues.")
+                .define("liveRelayDuringChunky", false);
+
+        liveRelayDuringScan = builder
+                .comment("If true, stream tiles over network to online players in real-time during /jmchunky generate. If false, tiles are saved to server cache and full catalog sync is triggered when scan completes.")
+                .define("liveRelayDuringScan", false);
+
+        excludeNearbyPlayers = builder
+                .comment("If true, never relays a tile to a player who is already within render distance of that chunk (since their client already maps it).")
+                .define("excludeNearbyPlayers", true);
+
+        playerExcludeRadiusChunks = builder
+                .comment("Chunk radius around a player considered nearby to skip relaying duplicate tiles.")
+                .defineInRange("playerExcludeRadiusChunks", 12, 1, 64);
 
         chunksPerTick = builder
                 .comment("Maximum number of chunks to process per server tick during /jmchunky generate")

@@ -3,6 +3,7 @@ package com.jmchunkybridge.service;
 import com.jmsharedmaps.server.CatchupSendQueue;
 import com.jmsharedmaps.server.StoredTile;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,27 @@ public class ChunkSyncService {
         List<StoredTile> list = Collections.singletonList(tile);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             try {
+                CatchupSendQueue.enqueue(player, list);
+            } catch (Throwable t) {
+                LOGGER.debug("Failed to enqueue tile to player {}: {}", player.getName().getString(), t.getMessage());
+            }
+        }
+    }
+
+    public static void relayExcludingNearby(MinecraftServer server, StoredTile tile, ServerLevel level, int chunkX, int chunkZ, int radiusChunks) {
+        if (server == null || tile == null || level == null) return;
+        List<StoredTile> list = Collections.singletonList(tile);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            try {
+                if (player.serverLevel() == level) {
+                    int px = player.chunkPosition().x;
+                    int pz = player.chunkPosition().z;
+                    int dx = Math.abs(px - chunkX);
+                    int dz = Math.abs(pz - chunkZ);
+                    if (Math.max(dx, dz) <= radiusChunks) {
+                        continue;
+                    }
+                }
                 CatchupSendQueue.enqueue(player, list);
             } catch (Throwable t) {
                 LOGGER.debug("Failed to enqueue tile to player {}: {}", player.getName().getString(), t.getMessage());

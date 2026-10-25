@@ -98,7 +98,7 @@ public class RegionScanTask {
             }
         }
 
-        if (!batch.isEmpty()) {
+        if (!batch.isEmpty() && BridgeConfig.CONFIG.liveRelayDuringScan.get()) {
             ChunkSyncService.relayBatchToAll(server, batch);
         }
 

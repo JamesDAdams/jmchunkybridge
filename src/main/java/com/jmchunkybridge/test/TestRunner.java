@@ -20,7 +20,25 @@ public class TestRunner {
         testCompression();
         testStoredTileKey();
         testRegionScanner();
+        testDistanceExclusion();
         System.out.println("ALL TESTS PASSED SUCCESSFULLY!");
+    }
+
+    private static void testDistanceExclusion() {
+        System.out.print("Testing Distance Exclusion Logic... ");
+        int chunkX = 10;
+        int chunkZ = 20;
+        int radius = 12;
+
+        int px1 = 15, pz1 = 25;
+        boolean excluded1 = Math.max(Math.abs(px1 - chunkX), Math.abs(pz1 - chunkZ)) <= radius;
+        if (!excluded1) throw new AssertionError("Player at (15, 25) should be excluded");
+
+        int px2 = 30, pz2 = 20;
+        boolean excluded2 = Math.max(Math.abs(px2 - chunkX), Math.abs(pz2 - chunkZ)) <= radius;
+        if (excluded2) throw new AssertionError("Player at (30, 20) should not be excluded");
+
+        System.out.println("OK");
     }
 
     private static void testCompression() {

@@ -32,10 +32,9 @@ public class ChunkLoadHook {
         ResourceLocation dim = level.dimension().location();
 
         boolean chunkyActive = ChunkyIntegration.isChunkyGenerating();
-        boolean isNew = event.isNewChunk();
         boolean chunkyOnly = BridgeConfig.CONFIG.autoSyncChunkyOnly.get();
 
-        if (chunkyOnly && !chunkyActive && !isNew) {
+        if (chunkyOnly && !chunkyActive) {
             return;
         }
 
@@ -45,7 +44,19 @@ public class ChunkLoadHook {
 
         StoredTile tile = TileConverter.convertAndStore(level, chunk);
         if (tile != null) {
-            ChunkSyncService.relayToAll(level.getServer(), tile);
+            boolean shouldRelay = true;
+            if (chunkyActive && !BridgeConfig.CONFIG.liveRelayDuringChunky.get()) {
+                shouldRelay = false;
+            }
+
+            if (shouldRelay) {
+                if (BridgeConfig.CONFIG.excludeNearbyPlayers.get()) {
+                    int radius = BridgeConfig.CONFIG.playerExcludeRadiusChunks.get();
+                    ChunkSyncService.relayExcludingNearby(level.getServer(), tile, level, pos.x, pos.z, radius);
+                } else {
+                    ChunkSyncService.relayToAll(level.getServer(), tile);
+                }
+            }
         }
     }
 }
